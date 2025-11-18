@@ -1,8 +1,26 @@
+"use client"
+
 import Image from "next/image";
 import Link from "next/link";
 import UserInfo from "@/components/UserInfo";
+import { useEffect, useState } from "react";
+import { Island_Moments } from "next/font/google";
 
 export default function Home() {
+  const [isLoggedIn, setisLoggedIn] = useState(false)
+
+  useEffect(()=>{
+    const checktoken = async ()=>{
+      let token = localStorage.getItem("token")
+      if(!token){
+        await setisLoggedIn(false)
+      }else{
+        await setisLoggedIn(true)
+      }
+    }
+
+    checktoken()
+  },[])
   return (
     <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
       <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
@@ -39,6 +57,13 @@ export default function Home() {
           >
             Login
           </Link>
+
+          {
+            isLoggedIn && <button className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-purple-600 px-5 text-purple-600 transition-colors hover:bg-purple-50 dark:hover:bg-purple-900/20 md:w-[158px]" onClick={()=>{
+              localStorage.removeItem("token")
+              setisLoggedIn(false)
+            }}>Logout</button>
+          }
         </div>
       </main>
     </div>

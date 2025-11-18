@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { verifyPassword } from '@/lib/users';
+import prisma from '@/lib/prisma';
 import { generateToken } from '@/lib/jwt';
+import bcrypt from "bcrypt"
 
 export async function POST(request) {
   try {
@@ -13,39 +15,21 @@ export async function POST(request) {
         { status: 400 }
       );
     }
+
     
-    // Verify password
-    const user = await verifyPassword(email, password);
-    
-    if (!user) {
-      return NextResponse.json(
-        { error: 'Invalid email or password' },
-        { status: 401 }
-      );
+    const user = await prisma.user.findUnique({where:{email}})
+
+    if(!user){
+      return NextResponse.json({message:"User does not exists"},{status:400})
+      }
+
+    const checkPass = await bcrypt.compare(password,user.password)
+    if(!checkPass){
+      return NextResponse.json({message:"invalid cred"},{status:400})
     }
-    
-    // Generate JWT token
-    const token = generateToken({ userId: user.id, email: user.email });
-    
-    // Create response
-    const response = NextResponse.json(
-      { 
-        message: 'Login successful',
-        user,
-        token 
-      },
-      { status: 200 }
-    );
-    
-    // Set HTTP-only cookie
-    response.cookies.set('token', token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 60 * 60 * 24 * 7 // 7 days
-    });
-    
-    return response;
+    const token = await generateToken({name:user.name,email})
+
+    return NextResponse.json({message:"logged in",token},{status:200})
   } catch (error) {
     return NextResponse.json(
       { error: 'Internal server error' },

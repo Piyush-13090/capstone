@@ -1,5 +1,9 @@
+import jwt from "jsonwebtoken"
+
+import bcrypt from "bcrypt"
 import { NextResponse } from 'next/server';
 import { createUser } from '@/lib/users';
+import prisma from '@/lib/prisma';
 import { generateToken } from '@/lib/jwt';
 
 export async function POST(request) {
@@ -14,48 +18,24 @@ export async function POST(request) {
       );
     }
     
-    // Validate email format
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      return NextResponse.json(
-        { error: 'Invalid email format' },
-        { status: 400 }
-      );
-    }
+    const user = await prisma.user.findUnique({where:{email}})
+
+    if(user){
+      return NextResponse.json({message:"User exists"},{status:400})
+        }
+
+    const hashedPass = await bcrypt.hash(password,10)
+
+    const createdUser= await prisma.user.create({
+      data:{
+        name,email,password:hashedPass
+      }
+    })
+
+    const token = await generateToken({name,email})
+
+    return NextResponse.json({message:"Use signedup succesffully",token},{status:201})
     
-    // Validate password length
-    if (password.length < 6) {
-      return NextResponse.json(
-        { error: 'Password must be at least 6 characters' },
-        { status: 400 }
-      );
-    }
-    
-    // Create user
-    const user = await createUser(name, email, password);
-    
-    // Generate JWT token
-    const token = generateToken({ userId: user.id, email: user.email });
-    
-    // Create response
-    const response = NextResponse.json(
-      { 
-        message: 'User created successfully',
-        user,
-        token 
-      },
-      { status: 201 }
-    );
-    
-    // Set HTTP-only cookie
-    response.cookies.set('token', token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 60 * 60 * 24 * 7 // 7 days
-    });
-    
-    return response;
   } catch (error) {
     if (error.message === 'User already exists') {
       return NextResponse.json(
