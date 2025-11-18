@@ -1,36 +1,69 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+Next.js JWT Auth Starter
 
-## Getting Started
+A lightweight authentication starter built with Next.js (App Router), Prisma, PostgreSQL, JWT, and bcrypt. Includes signup/login pages, token handling, and a simple Tailwind UI.
 
-First, run the development server:
+🚀 Features
 
-```bash
+Next.js 16 + React 19
+
+Secure auth with bcrypt + JWT
+
+Prisma ORM with PostgreSQL
+
+Auth routes: /signup, /login, /logout, /me
+
+Tokens stored in localStorage (can be switched to HTTP-only cookies)
+
+Clean UI with Tailwind CSS 4
+
+📁 Structure
+src/
+  app/
+    login/, signup/, api/auth/...
+  components/
+  lib/
+prisma/
+  schema.prisma
+
+⚙️ Setup
+
+1. Install
+
+git clone <repo> project
+cd project
+npm install
+
+
+2. Environment
+Create .env:
+
+DATABASE_URL="postgres://USER:PASS@HOST:PORT/db"
+JWT_SECRET="your-secret"
+
+
+3. Prisma
+
+npx prisma migrate dev
+npx prisma generate
+
+
+4. Run
+
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+Visit: http://localhost:3000
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+🔌 API Overview
+Endpoint	Method	Description
+/api/auth/signup	POST	Create user & return JWT
+/api/auth/login	POST	Login & return JWT
+/api/auth/logout	POST	Clear token cookie
+/api/auth/me	GET	Return current user
+🧩 Next Steps
 
-## Learn More
+Switch /me to Prisma (remove file-based store)
 
-To learn more about Next.js, take a look at the following resources:
+Add route protection middleware
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Use HTTP-only cookies for better security
