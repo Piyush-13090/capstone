@@ -1,16 +1,98 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { login } from '@/lib/auth';
+import {
+  ChevronDown,
+  Sparkles,
+  Users,
+  Image as ImageIcon,
+  TrendingUp,
+  Shield,
+  Zap,
+  Globe,
+  ArrowRight
+} from 'lucide-react';
 
 export default function LoginPage() {
   const router = useRouter();
+  const [currentSection, setCurrentSection] = useState(0);
+  const [showAuthForm, setShowAuthForm] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  const sections = [
+    {
+      id: 'hero',
+      title: 'Professional Social Networking',
+      subtitle: 'Connect, Share, and Grow Your Network',
+      description: 'A modern platform designed for meaningful connections and professional growth. Share your insights, build your network, and engage with a global community.',
+      gradient: 'from-slate-900 via-purple-900 to-slate-900',
+      icon: Globe,
+      stats: [
+        { label: 'Active Users', value: '10K+' },
+        { label: 'Posts Shared', value: '50K+' },
+        { label: 'Countries', value: '120+' }
+      ]
+    },
+    {
+      id: 'features',
+      title: 'Rich Media Sharing',
+      subtitle: 'Express Yourself with Powerful Tools',
+      description: 'Upload high-quality photos and videos. Share your professional portfolio, creative work, or personal moments with advanced media management.',
+      gradient: 'from-blue-900 via-indigo-900 to-purple-900',
+      icon: ImageIcon,
+      features: [
+        { icon: ImageIcon, title: 'HD Media', desc: 'Upload photos & videos' },
+        { icon: Shield, title: 'Privacy Control', desc: 'Your data, your rules' },
+        { icon: Zap, title: 'Fast Upload', desc: 'Lightning quick sharing' }
+      ]
+    },
+    {
+      id: 'community',
+      title: 'Build Meaningful Connections',
+      subtitle: 'Engage with Like-Minded Professionals',
+      description: 'Join conversations that matter. Comment, like, and interact with content from professionals and creators worldwide.',
+      gradient: 'from-purple-900 via-pink-900 to-rose-900',
+      icon: Users,
+      features: [
+        { icon: Users, title: 'Global Network', desc: 'Connect worldwide' },
+        { icon: TrendingUp, title: 'Trending Topics', desc: 'Stay updated' },
+        { icon: Sparkles, title: 'Smart Feed', desc: 'Personalized content' }
+      ]
+    },
+    {
+      id: 'cta',
+      title: 'Ready to Get Started?',
+      subtitle: 'Join Our Growing Community',
+      description: 'Create your free account and start connecting with professionals from around the world. No credit card required.',
+      gradient: 'from-indigo-900 via-purple-900 to-pink-900',
+      icon: Zap,
+      cta: true
+    }
+  ];
+
+  useEffect(() => {
+    const handleScroll = (e) => {
+      if (showAuthForm) return;
+
+      const delta = e.deltaY;
+      if (Math.abs(delta) > 10) {
+        if (delta > 0 && currentSection < sections.length - 1) {
+          setCurrentSection(prev => prev + 1);
+        } else if (delta < 0 && currentSection > 0) {
+          setCurrentSection(prev => prev - 1);
+        }
+      }
+    };
+
+    window.addEventListener('wheel', handleScroll, { passive: true });
+    return () => window.removeEventListener('wheel', handleScroll);
+  }, [currentSection, showAuthForm, sections.length]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -19,7 +101,7 @@ export default function LoginPage() {
 
     try {
       const res = await login(email, password);
-      localStorage.setItem("token",res.token)
+      localStorage.setItem("token", res.token);
       router.push('/');
       router.refresh();
     } catch (err) {
@@ -29,76 +111,236 @@ export default function LoginPage() {
     }
   };
 
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 dark:bg-black px-4">
-      <div className="w-full max-w-md space-y-8 rounded-lg bg-white dark:bg-zinc-900 p-8 shadow-lg">
-        <div>
-          <h2 className="text-center text-3xl font-bold text-black dark:text-zinc-50">
-            Sign in to your account
-          </h2>
-        </div>
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          {error && (
-            <div className="rounded-md bg-red-50 dark:bg-red-900/20 p-4">
-              <p className="text-sm text-red-800 dark:text-red-200">{error}</p>
+  if (showAuthForm) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center p-4">
+        <div className="w-full max-w-md">
+          <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-8 shadow-2xl border border-white/20">
+            <div className="text-center mb-8">
+              <div className="w-16 h-16 mx-auto mb-4 rounded-xl bg-gradient-to-br from-primary to-pink-600 flex items-center justify-center">
+                <TrendingUp className="w-8 h-8 text-white" />
+              </div>
+              <h2 className="text-3xl font-bold text-white mb-2">
+                Welcome Back
+              </h2>
+              <p className="text-gray-300">Sign in to your account</p>
             </div>
-          )}
-          <div className="space-y-4">
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                Email address
-              </label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-zinc-800 px-3 py-2 text-black dark:text-zinc-50 placeholder-gray-400 focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500"
-                placeholder="Enter your email"
-              />
-            </div>
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                Password
-              </label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                autoComplete="current-password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-zinc-800 px-3 py-2 text-black dark:text-zinc-50 placeholder-gray-400 focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500"
-                placeholder="Enter your password"
-              />
-            </div>
-          </div>
 
-          <div>
+            <form className="space-y-5" onSubmit={handleSubmit}>
+              {error && (
+                <div className="rounded-xl bg-red-500/20 p-4 border border-red-500/50">
+                  <p className="text-sm text-red-200">{error}</p>
+                </div>
+              )}
+
+              <div>
+                <label htmlFor="email" className="block text-sm font-medium text-gray-200 mb-2">
+                  Email Address
+                </label>
+                <input
+                  id="email"
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-gray-400 focus:border-primary focus:ring-2 focus:ring-primary/50 outline-none transition-all"
+                  placeholder="you@example.com"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="password" className="block text-sm font-medium text-gray-200 mb-2">
+                  Password
+                </label>
+                <input
+                  id="password"
+                  type="password"
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-gray-400 focus:border-primary focus:ring-2 focus:ring-primary/50 outline-none transition-all"
+                  placeholder="••••••••"
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full py-3.5 bg-gradient-to-r from-primary to-pink-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl disabled:opacity-50 transition-all"
+              >
+                {loading ? 'Signing in...' : 'Sign In'}
+              </button>
+
+              <div className="text-center pt-4">
+                <p className="text-sm text-gray-300">
+                  Don't have an account?{' '}
+                  <Link href="/signup" className="font-semibold text-primary hover:text-pink-400 transition-colors">
+                    Create Account
+                  </Link>
+                </p>
+              </div>
+            </form>
+
             <button
-              type="submit"
-              disabled={loading}
-              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              onClick={() => setShowAuthForm(false)}
+              className="w-full mt-6 py-2 text-sm text-gray-400 hover:text-white transition-colors"
             >
-              {loading ? 'Signing in...' : 'Sign in'}
+              ← Back to Home
             </button>
           </div>
+        </div>
+      </div>
+    );
+  }
 
-          <div className="text-center">
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              Don&apost have an account?{' '}
-              <Link href="/signup" className="font-medium text-purple-600 hover:text-purple-500 dark:text-purple-400">
-                Sign up
-              </Link>
-            </p>
+  const currentSectionData = sections[currentSection];
+  const Icon = currentSectionData.icon;
+
+  return (
+    <div className="h-screen overflow-hidden bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative">
+      {/* Navigation */}
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-black/20 backdrop-blur-md border-b border-white/10">
+        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-pink-600 flex items-center justify-center">
+              <TrendingUp className="w-6 h-6 text-white" />
+            </div>
+            <span className="text-2xl font-bold text-white">Vibe</span>
           </div>
-        </form>
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => setShowAuthForm(true)}
+              className="px-6 py-2 text-white hover:text-gray-300 transition-colors font-medium"
+            >
+              Sign In
+            </button>
+            <Link
+              href="/signup"
+              className="px-6 py-2 bg-gradient-to-r from-primary to-pink-600 text-white rounded-xl font-medium hover:shadow-lg transition-all"
+            >
+              Get Started
+            </Link>
+          </div>
+        </div>
+      </nav>
+
+      {/* Progress Indicator */}
+      <div className="fixed right-8 top-1/2 -translate-y-1/2 z-40 flex flex-col gap-3">
+        {sections.map((_, index) => (
+          <button
+            key={index}
+            onClick={() => setCurrentSection(index)}
+            className={`w-2 h-2 rounded-full transition-all ${index === currentSection
+                ? 'bg-primary h-8'
+                : 'bg-white/30 hover:bg-white/50'
+              }`}
+          />
+        ))}
+      </div>
+
+      {/* Main Content */}
+      <div
+        className="h-full transition-all duration-700 ease-in-out"
+        style={{ transform: `translateY(-${currentSection * 100}vh)` }}
+      >
+        {sections.map((section, index) => (
+          <div
+            key={section.id}
+            className="h-screen w-full flex items-center justify-center px-6 absolute top-0"
+            style={{ transform: `translateY(${index * 100}vh)` }}
+          >
+            <div className="max-w-6xl w-full pt-20">
+              {section.stats ? (
+                // Hero Section
+                <div className="text-center">
+                  <div className="inline-block px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full text-sm text-gray-300 mb-6">
+                    Professional Social Platform
+                  </div>
+                  <h1 className="text-6xl md:text-7xl font-bold text-white mb-6 leading-tight">
+                    {section.title}
+                  </h1>
+                  <p className="text-xl md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto">
+                    {section.description}
+                  </p>
+                  <div className="flex flex-wrap justify-center gap-6 mb-12">
+                    {section.stats.map((stat, i) => (
+                      <div key={i} className="bg-white/10 backdrop-blur-sm rounded-xl p-6 min-w-[150px]">
+                        <div className="text-3xl font-bold text-white mb-1">{stat.value}</div>
+                        <div className="text-sm text-gray-400">{stat.label}</div>
+                      </div>
+                    ))}
+                  </div>
+                  <button
+                    onClick={() => setCurrentSection(currentSection + 1)}
+                    className="animate-bounce mt-8"
+                  >
+                    <ChevronDown className="w-10 h-10 text-white/50" />
+                  </button>
+                </div>
+              ) : section.features ? (
+                // Features Section
+                <div>
+                  <div className="text-center mb-16">
+                    <h2 className="text-5xl md:text-6xl font-bold text-white mb-6">
+                      {section.title}
+                    </h2>
+                    <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+                      {section.description}
+                    </p>
+                  </div>
+                  <div className="grid md:grid-cols-3 gap-8 mb-12">
+                    {section.features.map((feature, i) => {
+                      const FeatureIcon = feature.icon;
+                      return (
+                        <div key={i} className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20 hover:bg-white/20 transition-all">
+                          <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-primary to-pink-600 flex items-center justify-center mb-4">
+                            <FeatureIcon className="w-7 h-7 text-white" />
+                          </div>
+                          <h3 className="text-xl font-bold text-white mb-2">{feature.title}</h3>
+                          <p className="text-gray-400">{feature.desc}</p>
+                        </div>
+                      );
+                    })}
+                  </div>
+                  <div className="text-center">
+                    <button
+                      onClick={() => setCurrentSection(currentSection + 1)}
+                      className="animate-bounce"
+                    >
+                      <ChevronDown className="w-10 h-10 text-white/50" />
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                // CTA Section
+                <div className="text-center">
+                  <h2 className="text-6xl md:text-7xl font-bold text-white mb-6">
+                    {section.title}
+                  </h2>
+                  <p className="text-xl md:text-2xl text-gray-300 mb-12 max-w-3xl mx-auto">
+                    {section.description}
+                  </p>
+                  <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                    <Link
+                      href="/signup"
+                      className="px-10 py-4 bg-gradient-to-r from-primary to-pink-600 text-white text-lg font-semibold rounded-xl shadow-2xl hover:shadow-3xl hover:scale-105 transition-all inline-flex items-center justify-center gap-2"
+                    >
+                      Create Free Account
+                      <ArrowRight className="w-5 h-5" />
+                    </Link>
+                    <button
+                      onClick={() => setShowAuthForm(true)}
+                      className="px-10 py-4 bg-white/10 backdrop-blur-sm text-white text-lg font-semibold rounded-xl border border-white/20 hover:bg-white/20 transition-all"
+                    >
+                      Sign In
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
 }
-

@@ -1,71 +1,129 @@
-"use client"
+import { getCurrentUserServer } from '@/lib/auth-server';
+import { redirect } from 'next/navigation';
+import prisma from '@/lib/prisma';
+import CreatePost from '@/components/CreatePost';
+import PostCard from '@/components/PostCard';
+import Navbar from '@/components/Navbar';
 
-import Image from "next/image";
-import Link from "next/link";
-import UserInfo from "@/components/UserInfo";
-import { useEffect, useState } from "react";
-import { Island_Moments } from "next/font/google";
+export default async function HomePage({ searchParams }) {
+  const user = await getCurrentUserServer();
 
-export default function Home() {
-  const [isLoggedIn, setisLoggedIn] = useState(false)
+  if (!user) {
+    redirect('/login');
+  }
 
-  useEffect(()=>{
-    const checktoken = async ()=>{
-      let token = localStorage.getItem("token")
-      if(!token){
-        await setisLoggedIn(false)
-      }else{
-        await setisLoggedIn(true)
-      }
-    }
+  const params = await searchParams;
+  const sort = params?.sort || 'newest';
+  const search = params?.search || '';
 
-    checktoken()
-  },[])
+  console.log('Search params:', { sort, search });
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <div className="w-full flex justify-between items-center mb-8">
-          <Image
-            className="dark:invert"
-            src="/next.svg"
-            alt="Next.js logo"
-            width={100}
-            height={20}
-            priority
-          />
-          <UserInfo />
-        </div>
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            Authentication Demo
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            This is a simple authentication system built with Next.js, JWT, and bcrypt.
-            Sign up or log in to get started.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <Link
-            href="/signup"
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-purple-600 px-5 text-white transition-colors hover:bg-purple-700 md:w-[158px]"
-          >
-            Sign Up
-          </Link>
-          <Link
-            href="/login"
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-purple-600 px-5 text-purple-600 transition-colors hover:bg-purple-50 dark:hover:bg-purple-900/20 md:w-[158px]"
-          >
-            Login
-          </Link>
+    <div className="min-h-screen gradient-bg">
+      <Navbar user={user} />
 
-          {
-            isLoggedIn && <button className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-purple-600 px-5 text-purple-600 transition-colors hover:bg-purple-50 dark:hover:bg-purple-900/20 md:w-[158px]" onClick={()=>{
-              localStorage.removeItem("token")
-              setisLoggedIn(false)
-            }}>Logout</button>
-          }
-        </div>
+      <main className="max-w-2xl mx-auto px-4 py-8">
+        <HomeContent user={user} sort={sort} search={search} />
       </main>
     </div>
+  );
+}
+
+async function HomeContent({ user, sort, search }) {
+  const prisma = (await import('@/lib/prisma')).default;
+
+  let orderBy = {};
+  if (sort === 'newest') {
+    orderBy = { createdAt: 'desc' };
+  } else if (sort === 'oldest') {
+    orderBy = { createdAt: 'asc' };
+  } else if (sort === 'most_commented') {
+    orderBy = { comments: { _count: 'desc' } };
+  }
+
+  const where = search
+    ? {
+      OR: [
+        { content: { contains: search } },
+        { author: { name: { contains: search } } },
+        { comments: { some: { content: { contains: search } } } },
+      ],
+    }
+    : {};
+
+  const posts = await prisma.post.findMany({
+    where,
+    orderBy,
+    take: 50,
+    include: {
+      author: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+        },
+      },
+      _count: {
+        select: { comments: true, likes: true },
+      },
+      likes: {
+        where: { userId: user.id },
+        select: { userId: true },
+      },
+    },
+  });
+
+  return (
+    <>
+      {/* Sort Tabs */}
+      <div className="glass rounded-2xl p-2 mb-6 flex gap-2">
+        <a
+          href="/?sort=newest"
+          className={`flex-1 text-center py-3 px-4 font-semibold rounded-xl transition-all ${sort === 'newest'
+              ? 'bg-gradient-to-r from-primary to-pink-600 text-white shadow-lg'
+              : 'text-muted-foreground hover:bg-white/50'
+            }`}
+        >
+          🔥 Latest
+        </a>
+        <a
+          href="/?sort=oldest"
+          className={`flex-1 text-center py-3 px-4 font-semibold rounded-xl transition-all ${sort === 'oldest'
+              ? 'bg-gradient-to-r from-primary to-pink-600 text-white shadow-lg'
+              : 'text-muted-foreground hover:bg-white/50'
+            }`}
+        >
+          ⏰ Oldest
+        </a>
+        <a
+          href="/?sort=most_commented"
+          className={`flex-1 text-center py-3 px-4 font-semibold rounded-xl transition-all ${sort === 'most_commented'
+              ? 'bg-gradient-to-r from-primary to-pink-600 text-white shadow-lg'
+              : 'text-muted-foreground hover:bg-white/50'
+            }`}
+        >
+          💬 Popular
+        </a>
+      </div>
+
+      <CreatePost user={user} />
+
+      <div className="space-y-6 mt-8">
+        {posts.map((post) => (
+          <PostCard key={post.id} post={post} currentUser={user} />
+        ))}
+        {posts.length === 0 && (
+          <div className="glass rounded-3xl p-16 text-center">
+            <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-gradient-to-br from-primary/20 to-pink-600/20 flex items-center justify-center">
+              <svg className="w-12 h-12 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+              </svg>
+            </div>
+            <h3 className="text-2xl font-bold mb-3 gradient-text">No posts yet</h3>
+            <p className="text-muted-foreground text-lg">Be the first to share something amazing!</p>
+          </div>
+        )}
+      </div>
+    </>
   );
 }

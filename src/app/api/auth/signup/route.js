@@ -9,7 +9,7 @@ import { generateToken } from '@/lib/jwt';
 export async function POST(request) {
   try {
     const { name, email, password } = await request.json();
-    
+
     // Validate input
     if (!name || !email || !password) {
       return NextResponse.json(
@@ -17,25 +17,32 @@ export async function POST(request) {
         { status: 400 }
       );
     }
-    
-    const user = await prisma.user.findUnique({where:{email}})
 
-    if(user){
-      return NextResponse.json({message:"User exists"},{status:400})
-        }
+    const user = await prisma.user.findUnique({ where: { email } })
 
-    const hashedPass = await bcrypt.hash(password,10)
+    if (user) {
+      return NextResponse.json({ message: "User exists" }, { status: 400 })
+    }
 
-    const createdUser= await prisma.user.create({
-      data:{
-        name,email,password:hashedPass
+    const hashedPass = await bcrypt.hash(password, 10)
+
+    const createdUser = await prisma.user.create({
+      data: {
+        name, email, password: hashedPass
       }
     })
 
-    const token = await generateToken({name,email})
+    const token = await generateToken({ id: createdUser.id, name, email })
 
-    return NextResponse.json({message:"Use signedup succesffully",token},{status:201})
-    
+    const response = NextResponse.json({ message: "Use signedup succesffully", token }, { status: 201 })
+    response.cookies.set('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 60 * 60 * 24 * 7 // 7 days
+    })
+    return response
+
   } catch (error) {
     if (error.message === 'User already exists') {
       return NextResponse.json(
@@ -43,7 +50,7 @@ export async function POST(request) {
         { status: 409 }
       );
     }
-    
+
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
