@@ -13,52 +13,51 @@ datasource db {
   provider = "postgresql"
 }
 
-
 model User {
-  id Int @id @default(autoincrement())
-  name String 
-  email String @unique 
-  password String 
-  bio String?
-  createdAt DateTime @default(now())
-  posts Post[]
-  comments Comment[]
-  likes Like[]
+  id        Int       @id @default(autoincrement())
+  name      String
+  email     String    @unique
+  password  String
+  bio       String?
+  createdAt DateTime  @default(now())
+  posts     Post[]
+  comments  Comment[]
+  likes     Like[]
 }
 
 model Post {
-  id Int @id @default(autoincrement())
-  content String
-  mediaUrl String?
+  id        Int       @id @default(autoincrement())
+  content   String
+  mediaUrl  String?
   mediaType String?
-  authorId Int
-  author User @relation(fields: [authorId], references: [id])
-  comments Comment[]
-  likes Like[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  authorId  Int
+  author    User      @relation(fields: [authorId], references: [id])
+  comments  Comment[]
+  likes     Like[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 }
 
 model Comment {
-  id Int @id @default(autoincrement())
-  content String
-  authorId Int
-  author User @relation(fields: [authorId], references: [id])
-  postId Int
-  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
-  parentId Int?
-  parent Comment? @relation("CommentChildren", fields: [parentId], references: [id], onDelete: Cascade)
-  children Comment[] @relation("CommentChildren")
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id        Int       @id @default(autoincrement())
+  content   String
+  authorId  Int
+  author    User      @relation(fields: [authorId], references: [id])
+  postId    Int
+  post      Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
+  parentId  Int?
+  parent    Comment?  @relation("CommentChildren", fields: [parentId], references: [id], onDelete: Cascade)
+  children  Comment[] @relation("CommentChildren")
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 }
 
 model Like {
-  id Int @id @default(autoincrement())
-  userId Int
-  user User @relation(fields: [userId], references: [id])
-  postId Int
-  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  postId    Int
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
 
   @@unique([userId, postId])
