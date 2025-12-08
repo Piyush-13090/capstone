@@ -88,20 +88,20 @@ export default function PostCard({ post, currentUser, isDetail = false }) {
 
     return (
         <div className={cn(
-            "glass rounded-3xl overflow-hidden transition-all card-lift",
+            "glass rounded-2xl overflow-hidden transition-all card-lift bg-white",
             !isDetail && "cursor-pointer",
-            isDetail && "shadow-2xl"
+            isDetail && "shadow-xl"
         )} onClick={() => !isDetail && !isEditing && router.push(`/posts/${post.id}`)}>
             <div className="p-6">
                 <div className="flex gap-4">
-                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary to-pink-600 flex-shrink-0 flex items-center justify-center font-bold text-white text-lg shadow-lg">
+                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-accent flex-shrink-0 flex items-center justify-center font-bold text-white text-lg shadow-md">
                         {post.author.name?.[0]?.toUpperCase()}
                     </div>
 
                     <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2 text-sm">
-                                <span className="font-bold hover:underline" onClick={(e) => e.stopPropagation()}>
+                                <span className="font-bold hover:underline text-foreground" onClick={(e) => e.stopPropagation()}>
                                     {post.author.name}
                                 </span>
                                 <span className="text-muted-foreground">@{post.author.email.split('@')[0]}</span>
@@ -112,17 +112,17 @@ export default function PostCard({ post, currentUser, isDetail = false }) {
                             </div>
 
                             {isAuthor && (
-                                <div className="flex items-center gap-3" onClick={(e) => e.stopPropagation()}>
+                                <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
                                     <button
                                         onClick={() => setIsEditing(!isEditing)}
-                                        className="flex items-center gap-1 px-3 py-1 text-sm text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-full transition-colors"
+                                        className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-colors font-medium"
                                     >
                                         <Edit2 className="w-4 h-4" />
                                         <span>Edit</span>
                                     </button>
                                     <button
                                         onClick={handleDelete}
-                                        className="flex items-center gap-1 px-3 py-1 text-sm text-muted-foreground hover:text-red-600 hover:bg-red-50 rounded-full transition-colors"
+                                        className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-muted-foreground hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors font-medium"
                                     >
                                         <Trash2 className="w-4 h-4" />
                                         <span>Delete</span>
@@ -132,25 +132,25 @@ export default function PostCard({ post, currentUser, isDetail = false }) {
                         </div>
 
                         {isEditing ? (
-                            <form onSubmit={handleUpdate} onClick={(e) => e.stopPropagation()} className="mt-2">
+                            <form onSubmit={handleUpdate} onClick={(e) => e.stopPropagation()} className="mt-3">
                                 <textarea
                                     value={editContent}
                                     onChange={(e) => setEditContent(e.target.value)}
-                                    className="w-full p-2 bg-secondary rounded-md resize-none focus:ring-2 focus:ring-primary outline-none"
+                                    className="w-full p-3 bg-secondary/50 border border-border rounded-xl resize-none focus:ring-2 focus:ring-primary outline-none transition-all font-medium"
                                     rows={3}
                                 />
-                                <div className="flex justify-end gap-2 mt-2">
+                                <div className="flex justify-end gap-2 mt-3">
                                     <button
                                         type="button"
                                         onClick={() => setIsEditing(false)}
-                                        className="px-3 py-1 text-sm font-medium hover:bg-secondary rounded-full"
+                                        className="px-4 py-2 text-sm font-semibold hover:bg-secondary rounded-xl transition-colors text-muted-foreground"
                                     >
                                         Cancel
                                     </button>
                                     <button
                                         type="submit"
                                         disabled={loading}
-                                        className="px-3 py-1 text-sm font-bold bg-primary text-primary-foreground rounded-full hover:bg-primary/90"
+                                        className="px-4 py-2 text-sm font-semibold bg-gradient-to-r from-primary to-accent text-white rounded-xl hover:shadow-lg transition-all disabled:opacity-50"
                                     >
                                         Save
                                     </button>
@@ -162,7 +162,7 @@ export default function PostCard({ post, currentUser, isDetail = false }) {
 
                                 {/* Media Display */}
                                 {post.mediaUrl && (
-                                    <div className="mt-3 rounded-xl overflow-hidden border border-border">
+                                    <div className="mt-4 rounded-xl overflow-hidden border-2 border-border/50">
                                         {post.mediaType === 'image' ? (
                                             <img
                                                 src={post.mediaUrl}
@@ -186,12 +186,12 @@ export default function PostCard({ post, currentUser, isDetail = false }) {
                             </>
                         )}
 
-                        <div className="flex justify-between mt-3 max-w-md text-muted-foreground">
+                        <div className="flex justify-between mt-4 max-w-md text-muted-foreground">
                             <button className="flex items-center gap-2 group transition-colors hover:text-primary">
-                                <div className="p-2 rounded-full group-hover:bg-primary/10">
-                                    <MessageCircle className="w-4 h-4" />
+                                <div className="p-2 rounded-xl group-hover:bg-primary/10 transition-colors">
+                                    <MessageCircle className="w-5 h-5" strokeWidth={2} />
                                 </div>
-                                <span className="text-sm">{post._count?.comments || 0}</span>
+                                <span className="text-sm font-semibold">{post._count?.comments || 0}</span>
                             </button>
                             <button
                                 onClick={handleLike}
@@ -201,16 +201,16 @@ export default function PostCard({ post, currentUser, isDetail = false }) {
                                 )}
                             >
                                 <div className={cn(
-                                    "p-2 rounded-full group-hover:bg-red-500/10",
+                                    "p-2 rounded-xl group-hover:bg-red-500/10 transition-colors",
                                     isLiked && "bg-red-500/10"
                                 )}>
-                                    <Heart className={cn("w-4 h-4", isLiked && "fill-current")} />
+                                    <Heart className={cn("w-5 h-5", isLiked && "fill-current")} strokeWidth={2} />
                                 </div>
-                                <span className="text-sm">{likesCount}</span>
+                                <span className="text-sm font-semibold">{likesCount}</span>
                             </button>
                             <button className="flex items-center gap-2 group transition-colors hover:text-green-500">
-                                <div className="p-2 rounded-full group-hover:bg-green-500/10">
-                                    <Share2 className="w-4 h-4" />
+                                <div className="p-2 rounded-xl group-hover:bg-green-500/10 transition-colors">
+                                    <Share2 className="w-5 h-5" strokeWidth={2} />
                                 </div>
                             </button>
                         </div>

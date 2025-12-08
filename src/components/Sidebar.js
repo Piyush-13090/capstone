@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, User, LogOut, Twitter } from 'lucide-react';
+import { Home, User, LogOut, Sparkles } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { logout } from '@/lib/auth';
 import { useRouter } from 'next/navigation';
@@ -29,8 +29,16 @@ export default function Sidebar({ user }) {
     return (
         <div className="flex flex-col h-full p-4">
             <div className="mb-8">
-                <Link href="/" className="flex items-center gap-2 text-primary">
-                    <Twitter className="w-8 h-8 fill-current" />
+                <Link href="/" className="flex items-center gap-3 group">
+                    <div className="relative">
+                        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-600 to-cyan-500 flex items-center justify-center shadow-lg group-hover:shadow-xl group-hover:scale-105 transition-all duration-300">
+                            <Sparkles className="w-7 h-7 text-white" strokeWidth={2.5} />
+                        </div>
+                        <div className="absolute -inset-1 bg-gradient-to-br from-blue-600 to-cyan-500 rounded-2xl opacity-20 blur-md group-hover:opacity-30 transition-opacity"></div>
+                    </div>
+                    <span className="hidden xl:inline text-2xl font-bold bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
+                        Nexus
+                    </span>
                 </Link>
             </div>
 
@@ -66,8 +74,8 @@ export default function Sidebar({ user }) {
                         <span className="hidden xl:inline">Logout</span>
                     </button>
 
-                    <div className="flex items-center gap-3 mt-4 p-3 rounded-full hover:bg-secondary cursor-pointer">
-                        <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center font-bold text-lg">
+                    <div className="flex items-center gap-3 mt-4 p-3 rounded-full hover:bg-secondary cursor-pointer transition-colors">
+                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-cyan-500 flex items-center justify-center font-bold text-lg text-white shadow-md">
                             {user.name?.[0]?.toUpperCase()}
                         </div>
                         <div className="hidden xl:block overflow-hidden">

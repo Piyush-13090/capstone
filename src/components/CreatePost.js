@@ -94,10 +94,10 @@ export default function CreatePost({ user }) {
     };
 
     return (
-        <div className="glass rounded-3xl p-6 shadow-lg">
+        <div className="glass rounded-2xl p-6 shadow-sm bg-white">
             <form onSubmit={handleSubmit}>
                 <div className="flex gap-4">
-                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary to-pink-600 flex-shrink-0 flex items-center justify-center font-bold text-white text-lg shadow-lg">
+                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-accent flex-shrink-0 flex items-center justify-center font-bold text-white text-lg shadow-md">
                         {user.name?.[0]?.toUpperCase()}
                     </div>
                     <div className="flex-1">
@@ -105,13 +105,13 @@ export default function CreatePost({ user }) {
                             value={content}
                             onChange={(e) => setContent(e.target.value)}
                             placeholder="What's on your mind? ✨"
-                            className="w-full p-4 bg-white/50 rounded-2xl resize-none focus:ring-2 focus:ring-primary outline-none text-base border border-border/30"
+                            className="w-full p-4 bg-secondary/30 rounded-xl resize-none focus:ring-2 focus:ring-primary outline-none text-base border border-border/50 transition-all font-medium placeholder:text-muted-foreground"
                             rows={3}
                         />
 
                         {/* Media Preview */}
                         {mediaPreview && (
-                            <div className="mt-4 relative rounded-2xl overflow-hidden border-2 border-primary/20 shadow-lg">
+                            <div className="mt-4 relative rounded-xl overflow-hidden border-2 border-primary/20 shadow-md">
                                 {mediaType === 'image' ? (
                                     <img
                                         src={mediaPreview}
@@ -128,7 +128,7 @@ export default function CreatePost({ user }) {
                                 <button
                                     type="button"
                                     onClick={removeMedia}
-                                    className="absolute top-3 right-3 p-2.5 bg-black/70 hover:bg-black/90 text-white rounded-full transition-all shadow-lg"
+                                    className="absolute top-3 right-3 p-2 bg-black/70 hover:bg-black/90 text-white rounded-xl transition-all shadow-lg"
                                 >
                                     <X className="w-5 h-5" />
                                 </button>
@@ -147,23 +147,23 @@ export default function CreatePost({ user }) {
                                 />
                                 <label
                                     htmlFor="media-upload"
-                                    className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-primary hover:bg-primary/10 rounded-xl cursor-pointer transition-all"
+                                    className="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold text-primary hover:bg-primary/10 rounded-xl cursor-pointer transition-all"
                                 >
-                                    <Image className="w-5 h-5" />
+                                    <Image className="w-5 h-5" strokeWidth={2} />
                                     <span className="hidden sm:inline">Photo</span>
                                 </label>
                                 <label
                                     htmlFor="media-upload"
-                                    className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-primary hover:bg-primary/10 rounded-xl cursor-pointer transition-all"
+                                    className="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold text-primary hover:bg-primary/10 rounded-xl cursor-pointer transition-all"
                                 >
-                                    <Video className="w-5 h-5" />
+                                    <Video className="w-5 h-5" strokeWidth={2} />
                                     <span className="hidden sm:inline">Video</span>
                                 </label>
                             </div>
                             <button
                                 type="submit"
                                 disabled={(!content.trim() && !mediaFile) || loading}
-                                className="px-8 py-3 bg-gradient-to-r from-primary to-pink-600 text-white font-bold rounded-xl hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed transition-all btn-ripple"
+                                className="px-8 py-3 bg-gradient-to-r from-blue-600 to-blue-500 text-white font-bold rounded-xl hover:from-blue-700 hover:to-blue-600 hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md"
                             >
                                 {loading ? (
                                     <Loader2 className="w-5 h-5 animate-spin" />

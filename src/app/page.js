@@ -76,33 +76,42 @@ async function HomeContent({ user, sort, search }) {
   return (
     <>
       {/* Sort Tabs */}
-      <div className="glass rounded-2xl p-2 mb-6 flex gap-2">
+      <div className="glass rounded-2xl p-1.5 mb-6 flex gap-1.5 shadow-md">
         <a
           href="/?sort=newest"
-          className={`flex-1 text-center py-3 px-4 font-semibold rounded-xl transition-all ${sort === 'newest'
-              ? 'bg-gradient-to-r from-primary to-pink-600 text-white shadow-lg'
-              : 'text-muted-foreground hover:bg-white/50'
+          className={`flex-1 text-center py-3.5 px-4 font-semibold rounded-xl transition-all duration-200 ${sort === 'newest'
+            ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-lg'
+            : 'text-muted-foreground hover:bg-blue-50 hover:text-blue-600'
             }`}
         >
-          🔥 Latest
+          <span className="flex items-center justify-center gap-2">
+            <span>🔥</span>
+            <span>Latest</span>
+          </span>
         </a>
         <a
           href="/?sort=oldest"
-          className={`flex-1 text-center py-3 px-4 font-semibold rounded-xl transition-all ${sort === 'oldest'
-              ? 'bg-gradient-to-r from-primary to-pink-600 text-white shadow-lg'
-              : 'text-muted-foreground hover:bg-white/50'
+          className={`flex-1 text-center py-3.5 px-4 font-semibold rounded-xl transition-all duration-200 ${sort === 'oldest'
+            ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-lg'
+            : 'text-muted-foreground hover:bg-blue-50 hover:text-blue-600'
             }`}
         >
-          ⏰ Oldest
+          <span className="flex items-center justify-center gap-2">
+            <span>⏰</span>
+            <span>Oldest</span>
+          </span>
         </a>
         <a
           href="/?sort=most_commented"
-          className={`flex-1 text-center py-3 px-4 font-semibold rounded-xl transition-all ${sort === 'most_commented'
-              ? 'bg-gradient-to-r from-primary to-pink-600 text-white shadow-lg'
-              : 'text-muted-foreground hover:bg-white/50'
+          className={`flex-1 text-center py-3.5 px-4 font-semibold rounded-xl transition-all duration-200 ${sort === 'most_commented'
+            ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-lg'
+            : 'text-muted-foreground hover:bg-blue-50 hover:text-blue-600'
             }`}
         >
-          💬 Popular
+          <span className="flex items-center justify-center gap-2">
+            <span>💬</span>
+            <span>Popular</span>
+          </span>
         </a>
       </div>
 
@@ -113,8 +122,8 @@ async function HomeContent({ user, sort, search }) {
           <PostCard key={post.id} post={post} currentUser={user} />
         ))}
         {posts.length === 0 && (
-          <div className="glass rounded-3xl p-16 text-center">
-            <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-gradient-to-br from-primary/20 to-pink-600/20 flex items-center justify-center">
+          <div className="glass rounded-3xl p-16 text-center shadow-lg">
+            <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
               <svg className="w-12 h-12 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
               </svg>

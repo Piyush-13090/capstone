@@ -31,7 +31,7 @@ export default function LoginPage() {
       title: 'Professional Social Networking',
       subtitle: 'Connect, Share, and Grow Your Network',
       description: 'A modern platform designed for meaningful connections and professional growth. Share your insights, build your network, and engage with a global community.',
-      gradient: 'from-slate-900 via-purple-900 to-slate-900',
+      gradient: 'from-blue-950 via-blue-900 to-blue-950',
       icon: Globe,
       stats: [
         { label: 'Active Users', value: '10K+' },
@@ -44,7 +44,7 @@ export default function LoginPage() {
       title: 'Rich Media Sharing',
       subtitle: 'Express Yourself with Powerful Tools',
       description: 'Upload high-quality photos and videos. Share your professional portfolio, creative work, or personal moments with advanced media management.',
-      gradient: 'from-blue-900 via-indigo-900 to-purple-900',
+      gradient: 'from-blue-900 via-indigo-900 to-blue-900',
       icon: ImageIcon,
       features: [
         { icon: ImageIcon, title: 'HD Media', desc: 'Upload photos & videos' },
@@ -57,7 +57,7 @@ export default function LoginPage() {
       title: 'Build Meaningful Connections',
       subtitle: 'Engage with Like-Minded Professionals',
       description: 'Join conversations that matter. Comment, like, and interact with content from professionals and creators worldwide.',
-      gradient: 'from-purple-900 via-pink-900 to-rose-900',
+      gradient: 'from-indigo-900 via-blue-900 to-cyan-900',
       icon: Users,
       features: [
         { icon: Users, title: 'Global Network', desc: 'Connect worldwide' },
@@ -70,7 +70,7 @@ export default function LoginPage() {
       title: 'Ready to Get Started?',
       subtitle: 'Join Our Growing Community',
       description: 'Create your free account and start connecting with professionals from around the world. No credit card required.',
-      gradient: 'from-indigo-900 via-purple-900 to-pink-900',
+      gradient: 'from-blue-900 via-indigo-900 to-blue-900',
       icon: Zap,
       cta: true
     }
@@ -117,8 +117,8 @@ export default function LoginPage() {
         <div className="w-full max-w-md">
           <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-8 shadow-2xl border border-white/20">
             <div className="text-center mb-8">
-              <div className="w-16 h-16 mx-auto mb-4 rounded-xl bg-gradient-to-br from-primary to-pink-600 flex items-center justify-center">
-                <TrendingUp className="w-8 h-8 text-white" />
+              <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-lg">
+                <Sparkles className="w-8 h-8 text-white" strokeWidth={2.5} />
               </div>
               <h2 className="text-3xl font-bold text-white mb-2">
                 Welcome Back
@@ -166,7 +166,7 @@ export default function LoginPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3.5 bg-gradient-to-r from-primary to-pink-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl disabled:opacity-50 transition-all"
+                className="w-full py-3.5 bg-gradient-to-r from-primary to-accent text-white font-semibold rounded-xl shadow-lg hover:shadow-xl disabled:opacity-50 transition-all"
               >
                 {loading ? 'Signing in...' : 'Sign In'}
               </button>
@@ -174,7 +174,7 @@ export default function LoginPage() {
               <div className="text-center pt-4">
                 <p className="text-sm text-gray-300">
                   Don't have an account?{' '}
-                  <Link href="/signup" className="font-semibold text-primary hover:text-pink-400 transition-colors">
+                  <Link href="/signup" className="font-semibold text-primary hover:text-accent transition-colors">
                     Create Account
                   </Link>
                 </p>
@@ -197,15 +197,18 @@ export default function LoginPage() {
   const Icon = currentSectionData.icon;
 
   return (
-    <div className="h-screen overflow-hidden bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative">
+    <div className="h-screen overflow-hidden bg-gradient-to-br from-blue-950 via-blue-900 to-blue-950 relative">
       {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-black/20 backdrop-blur-md border-b border-white/10">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-pink-600 flex items-center justify-center">
-              <TrendingUp className="w-6 h-6 text-white" />
+          <div className="flex items-center gap-3">
+            <div className="relative">
+              <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-primary via-primary-light to-accent flex items-center justify-center shadow-lg">
+                <Sparkles className="w-6 h-6 text-white" strokeWidth={2.5} />
+              </div>
+              <div className="absolute -inset-1 bg-gradient-to-br from-primary to-accent rounded-2xl opacity-20 blur-md"></div>
             </div>
-            <span className="text-2xl font-bold text-white">Vibe</span>
+            <span className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">Nexus</span>
           </div>
           <div className="flex items-center gap-4">
             <button
@@ -216,7 +219,7 @@ export default function LoginPage() {
             </button>
             <Link
               href="/signup"
-              className="px-6 py-2 bg-gradient-to-r from-primary to-pink-600 text-white rounded-xl font-medium hover:shadow-lg transition-all"
+              className="px-6 py-2 bg-gradient-to-r from-primary to-accent text-white rounded-xl font-medium hover:shadow-lg transition-all"
             >
               Get Started
             </Link>
@@ -231,8 +234,8 @@ export default function LoginPage() {
             key={index}
             onClick={() => setCurrentSection(index)}
             className={`w-2 h-2 rounded-full transition-all ${index === currentSection
-                ? 'bg-primary h-8'
-                : 'bg-white/30 hover:bg-white/50'
+              ? 'bg-primary h-8'
+              : 'bg-white/30 hover:bg-white/50'
               }`}
           />
         ))}
@@ -293,7 +296,7 @@ export default function LoginPage() {
                       const FeatureIcon = feature.icon;
                       return (
                         <div key={i} className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20 hover:bg-white/20 transition-all">
-                          <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-primary to-pink-600 flex items-center justify-center mb-4">
+                          <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center mb-4 shadow-lg">
                             <FeatureIcon className="w-7 h-7 text-white" />
                           </div>
                           <h3 className="text-xl font-bold text-white mb-2">{feature.title}</h3>
@@ -323,7 +326,7 @@ export default function LoginPage() {
                   <div className="flex flex-col sm:flex-row gap-4 justify-center">
                     <Link
                       href="/signup"
-                      className="px-10 py-4 bg-gradient-to-r from-primary to-pink-600 text-white text-lg font-semibold rounded-xl shadow-2xl hover:shadow-3xl hover:scale-105 transition-all inline-flex items-center justify-center gap-2"
+                      className="px-10 py-4 bg-gradient-to-r from-primary to-accent text-white text-lg font-semibold rounded-xl shadow-2xl hover:shadow-3xl hover:scale-105 transition-all inline-flex items-center justify-center gap-2"
                     >
                       Create Free Account
                       <ArrowRight className="w-5 h-5" />

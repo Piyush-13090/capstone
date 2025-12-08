@@ -6,8 +6,8 @@ const inter = Inter({
 });
 
 export const metadata = {
-  title: "Social App - Twitter Clone",
-  description: "A Twitter-like social media application",
+  title: "Nexus - Professional Social Network",
+  description: "Connect, share, and grow with Nexus - A modern professional social networking platform",
 };
 
 export default function RootLayout({ children }) {
