@@ -44,6 +44,12 @@ export async function POST(request) {
     return response
 
   } catch (error) {
+    console.error('Signup error details:', {
+      message: error.message,
+      stack: error.stack,
+      name: error.name
+    });
+
     if (error.message === 'User already exists') {
       return NextResponse.json(
         { error: error.message },
@@ -51,8 +57,24 @@ export async function POST(request) {
       );
     }
 
+    // Provide more specific error messages for debugging
+    let errorMessage = 'Internal server error';
+
+    if (error.message?.includes('DATABASE_URL')) {
+      errorMessage = 'Database configuration error';
+    } else if (error.message?.includes('JWT')) {
+      errorMessage = 'Authentication token error';
+    } else if (error.message?.includes('connect')) {
+      errorMessage = 'Database connection error';
+    } else if (error.code === 'P2002') {
+      errorMessage = 'Email already exists';
+    }
+
     return NextResponse.json(
-      { error: 'Internal server error' },
+      {
+        error: errorMessage,
+        details: process.env.NODE_ENV === 'development' ? error.message : undefined
+      },
       { status: 500 }
     );
   }

@@ -38,9 +38,28 @@ export async function POST(request) {
     })
     return response
   } catch (error) {
-    console.error('Login error:', error);
+    console.error('Login error details:', {
+      message: error.message,
+      stack: error.stack,
+      name: error.name
+    });
+
+    // Provide more specific error messages for debugging
+    let errorMessage = 'Internal server error';
+
+    if (error.message?.includes('DATABASE_URL')) {
+      errorMessage = 'Database configuration error';
+    } else if (error.message?.includes('JWT')) {
+      errorMessage = 'Authentication token error';
+    } else if (error.message?.includes('connect')) {
+      errorMessage = 'Database connection error';
+    }
+
     return NextResponse.json(
-      { error: 'Internal server error' },
+      {
+        error: errorMessage,
+        details: process.env.NODE_ENV === 'development' ? error.message : undefined
+      },
       { status: 500 }
     );
   }
